@@ -1,0 +1,11 @@
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+.env
+.DS_Store
+config.yaml
+outputs/figures/*.png
+outputs/tables/*.csv
+outputs/tables/*.xlsx
