@@ -452,8 +452,8 @@ def historical_contribution(
 
     by_t = work.set_index("t")
     resid = sample.set_index("t")["res0"]
-    sim_all = by_t[dep_var].copy()
-    sim_no_shock = by_t[dep_var].copy()
+    sim_all = by_t[dep_var].astype(float).copy()
+    sim_no_shock = by_t[dep_var].astype(float).copy()
     for t in by_t.index[by_t.index >= start_t]:
         if t not in resid.index:
             continue

@@ -47,7 +47,7 @@ original_replication_root: C:/path/to/Inequality_CGKS_replication_folder/replica
 ## Setup
 
 ```powershell
-cd C:\Users\asus\Desktop\Inequality_CGKS_replication_folder\python_replication
+cd path\to\Inequality_CGKS_replication_folder\python_replication
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
