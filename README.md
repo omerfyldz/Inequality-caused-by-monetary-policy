@@ -1,59 +1,129 @@
 # Inequality Caused by Monetary Policy
 
-Python/Jupyter replication of the main-paper results from:
+Python/Jupyter replication of Coibion, Gorodnichenko, Kueng, and Silvia (2017), **"Innocent Bystanders? Monetary Policy and Inequality"**, *Journal of Monetary Economics*, 88, 70-89.
 
-> Coibion, Gorodnichenko, Kueng, and Silvia (2017), **"Innocent Bystanders? Monetary Policy and Inequality"**.
+This repository contains a transparent replication of the paper's main empirical results. The project focuses on the econometric analysis: monetary policy shock identification, Jordà local projections, impulse-response estimation, distributional mechanisms, and comparison with the published findings.
 
-This project reproduces the paper's main empirical logic in Python while keeping the authors' original Stata/EViews replication folder untouched. The goal is not to rebuild all raw CEX preparation. The goal is to replicate the paper's analysis layer: the local projections, inequality responses, variance exercises, historical contribution exercises, and mechanism figures.
+## Replication Paper
 
-## Repository Scope
+The written replication study is included here:
 
-Replicated main-paper components:
+- [docs/replication_study.pdf](docs/replication_study.pdf)
 
-- Figure 1 and Table 1-style descriptive inequality evidence
-- Figure 2 macroeconomic local-projection sanity checks
-- Figure 3 main inequality impulse responses
-- Figures 4-5 variance decomposition and historical contribution
-- Figures 6-8 mechanism, percentile, transition, and net-worth exercises
-- Figure 9 inflation-target shock exercises
+The paper explains the research question, data structure, identification strategy, estimation method, replication design, results, limitations, and interpretation.
 
-Out of scope:
+## Research Question
 
-- Appendix robustness tables and figures
-- Full raw CEX microdata construction
-- Re-running EViews/X-12 seasonal adjustment
-- Re-estimating the inflation-target shock series from scratch
+The original paper asks whether contractionary monetary policy shocks increase economic inequality in the United States.
 
-## Expected Folder Layout
+The main outcomes are:
 
-This repo is designed to sit next to the original replication folder:
+- labor earnings inequality
+- total income inequality
+- consumption inequality
+- total expenditure inequality
+
+Each outcome is studied using three inequality measures:
+
+- cross-sectional standard deviation
+- Gini coefficient
+- 90th-10th percentile gap
+
+## Method
+
+The replication follows the paper's core time-series framework.
+
+1. Monetary policy shocks are based on the Romer and Romer approach, which removes the predictable component of Federal Reserve rate decisions using the Fed's real-time forecasts.
+2. Dynamic effects are estimated with Jordà local projections over horizons 0-20 quarters.
+3. Main inequality responses are interpreted as cumulative impulse responses.
+4. Inference uses Driscoll-Kraay robust covariance estimation to account for serial and cross-horizon dependence.
+5. The central statistical comparison is whether the full response path is jointly different from zero.
+
+The project is intentionally focused on the analysis layer rather than rebuilding all raw survey processing.
+
+## Main Findings
+
+The Python replication confirms the central conclusion of the paper:
+
+> Contractionary monetary policy shocks persistently increase inequality in income, labor earnings, consumption, and total expenditures.
+
+Current validation results:
+
+- Figure 3 main inequality responses: `12/12` panels match the paper's 5% joint-test conclusion.
+- Figure 6 percentile mechanism tests: `4/4` conclusions match the paper.
+- Figure 8 net-worth group tests: `4/4` conclusions match the paper.
+- Table 1-style descriptive correlations: maximum absolute difference from the paper is approximately `0.056`.
+
+The mechanism results also support the paper's interpretation: consumption and expenditure inequality are driven especially by asymmetric responses at the upper end of the distribution, while net-worth group comparisons are consistent with a savings-redistribution channel.
+
+## Repository Structure
+
+```text
+notebooks/
+  00_project_overview.ipynb
+  01_data_audit.ipynb
+  02_descriptive_results.ipynb
+  03_macro_irfs.ipynb
+  04_main_inequality_irfs.ipynb
+  05_variance_and_history.ipynb
+  06_channels_and_inflation_target.ipynb
+
+src/
+  data.py
+  local_projection.py
+  plots.py
+  metrics.py
+
+docs/
+  replication_study.pdf
+
+outputs/
+  figures/
+  tables/
+```
+
+## Notebooks
+
+The notebooks are organized in the same order as the replication workflow.
+
+1. `00_project_overview.ipynb` maps the paper's objectives to the Python project.
+2. `01_data_audit.ipynb` checks sample windows and key variables.
+3. `02_descriptive_results.ipynb` reproduces descriptive inequality patterns and correlation evidence.
+4. `03_macro_irfs.ipynb` checks whether the monetary shocks generate plausible aggregate responses.
+5. `04_main_inequality_irfs.ipynb` reproduces the central inequality impulse responses.
+6. `05_variance_and_history.ipynb` studies variance contributions and historical contribution exercises.
+7. `06_channels_and_inflation_target.ipynb` reproduces mechanism and inflation-target exercises.
+
+## Data Requirements
+
+The project expects the authors' supplied replication data folder to be available locally. Data files are not committed to this repository.
+
+Expected local layout:
 
 ```text
 Inequality_CGKS_replication_folder/
-  replication_folder/      # original authors' files, read-only input
-  python_replication/      # this repository
+  replication_folder/
+  python_replication/
 ```
 
-The Python code reads from the original folder through `src/data.py`. The original folder is not modified.
-
-If your local path differs, copy `config.example.yaml` to `config.yaml` and edit:
+If your local folder differs, copy `config.example.yaml` to `config.yaml` and edit:
 
 ```yaml
-original_replication_root: C:/path/to/Inequality_CGKS_replication_folder/replication_folder
+original_replication_root: "../replication_folder"
 ```
 
-`config.yaml` is intentionally ignored by Git.
+`config.yaml` is ignored by Git so that local paths remain private.
 
 ## Setup
 
 ```powershell
-cd path\to\Inequality_CGKS_replication_folder\python_replication
+cd path\to\python_replication
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
 
-The main dependencies are:
+Main dependencies:
 
 - `pandas`
 - `numpy`
@@ -66,87 +136,44 @@ The main dependencies are:
 - `xlrd`
 - `jupyter`
 
-## Run Order
+## Reproducing Results
 
 Run notebooks from a fresh kernel in numeric order:
 
-1. `notebooks/00_project_overview.ipynb`
-2. `notebooks/01_data_audit.ipynb`
-3. `notebooks/02_descriptive_results.ipynb`
-4. `notebooks/03_macro_irfs.ipynb`
-5. `notebooks/04_main_inequality_irfs.ipynb`
-6. `notebooks/05_variance_and_history.ipynb`
-7. `notebooks/06_channels_and_inflation_target.ipynb`
+```text
+00 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06
+```
 
-Generated figures and tables are written to:
+Generated tables and figures are written to:
 
 ```text
-outputs/figures/
 outputs/tables/
+outputs/figures/
 ```
 
-Those generated outputs are ignored by Git because they can be recreated by running the notebooks.
+Generated outputs are not tracked because they can be recreated by running the notebooks.
 
-## Code Structure
+## Validation and Limitations
 
-```text
-src/
-  data.py              # paths, Stata/Excel loading, macro reconstruction
-  local_projection.py  # stacked local projections, tests, Figure 4-5 helpers
-  plots.py             # consistent plotting helpers
-  metrics.py           # validation/comparison table helpers
+The main replication conclusions match the published paper. Remaining differences are documented in:
 
-notebooks/
-  00_project_overview.ipynb
-  01_data_audit.ipynb
-  02_descriptive_results.ipynb
-  03_macro_irfs.ipynb
-  04_main_inequality_irfs.ipynb
-  05_variance_and_history.ipynb
-  06_channels_and_inflation_target.ipynb
-```
+- [DEVIATIONS.md](DEVIATIONS.md)
 
-## Method Summary
+The most important limitations are:
 
-The paper studies how contractionary monetary policy shocks affect inequality. The core empirical method is Jorda-style local projections estimated over horizons 0-20. The main Python implementation follows the original Stata workflow:
+- the project uses supplied final analysis workfiles rather than rebuilding all raw survey construction;
+- some macro inputs are reconstructed from available source files;
+- exact finite-sample inference can differ across software implementations;
+- historical and variance contribution exercises should be interpreted qualitatively rather than as bit-for-bit numerical reproductions.
 
-- use the authors' supplied final CEX workfiles as canonical analysis inputs;
-- stack horizon-specific local-projection observations;
-- estimate fixed-effects horizon systems;
-- use Driscoll-Kraay standard errors through `linearmodels.PanelOLS`;
-- compute cumulative impulse responses for the paper's inequality outcomes;
-- reproduce the paper's joint tests where the Stata scripts test full response paths.
+These limitations do not change the central conclusion that contractionary monetary policy shocks raise measured inequality over the five-year response horizon.
 
-Where the original code uses Stata-specific commands, this project implements Python equivalents and documents any non-bit-identical behavior.
+## Citation
 
-## Current Validation Status
+Original paper:
 
-The notebooks have been executed end-to-end from fresh kernels.
+Coibion, O., Gorodnichenko, Y., Kueng, L., and Silvia, J. (2017). "Innocent Bystanders? Monetary Policy and Inequality." *Journal of Monetary Economics*, 88, 70-89.
 
-Current checks:
+Replication author:
 
-- Figure 3 main inequality IRFs: `12/12` panels match the paper's 5% joint-rejection conclusion.
-- Figure 6 percentile equality tests: `4/4` panels match the paper's 5% equality-test conclusion.
-- Figure 8 net-worth group gaps: `4/4` panels match the paper's 5% joint-rejection conclusion.
-- Table 1 HP-filtered correlations: maximum absolute difference from the paper is about `0.056`.
-
-See `DEVIATIONS.md` for the full validation and deviation log.
-
-## Important Deviations
-
-The main remaining deviations are documented rather than hidden:
-
-- Stata `xtscc ..., fe` is translated with `linearmodels.PanelOLS(..., entity_effects=True).fit(cov_type="driscoll-kraay")`. Both are Driscoll-Kraay approaches, but finite-sample details are not bit-identical.
-- The EViews/X-12 seasonal-adjustment stage is not rerun. The authors' final seasonally adjusted variables are used.
-- `macro_data_all.dta` is not supplied, so Figure 2 macro inputs are reconstructed from the available source files.
-- Figure 4 follows the original Stata formula, including the nonstandard denominator convention and the intercept plus horizon-dummy auxiliary OLS.
-- Figure 5 is a Python emulation of Stata's residual-augmented `forecast solve` setup. It follows the same economic counterfactual idea, but does not call Stata directly.
-- Appendix robustness work is intentionally excluded.
-
-## Data Policy
-
-This repository does not include the original authors' large Stata data files. To run the notebooks, place this repo next to the original `replication_folder` or configure the path in `config.yaml`.
-
-## Bottom Line
-
-This is a defensible Python/Jupyter replication of the main paper. The central inequality result is parallel with the published paper: contractionary monetary policy increases inequality, especially for consumption and expenditure measures. Remaining differences are mainly exact-software equivalence, reconstructed macro inputs, and historical/variance-decomposition details.
+Ömer Faruk Yıldız, Department of Economics, Boğaziçi University.
